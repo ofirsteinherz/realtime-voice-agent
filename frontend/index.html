@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Bot - WebRTC</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div style="position: relative; width: 100vw; height: 100vh;">
+        <canvas id="canvas"></canvas>
+        <div class="foreground"></div>
+        
+        <!-- Play/Stop Button -->
+        <img id="playBtn" src="assets/play-btn.png" alt="Start Voice Chat" class="play-button" onclick="start()">
+        <img id="stopBtnImg" src="assets/stop-btn.png" alt="Stop Voice Chat" class="play-button" onclick="stop()" style="display: none;">
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <div class="chat-header-avatar">💊</div>
+                    <div class="chat-header-info">
+                        <h2>Dr. Max</h2>
+                        <p>Licensed Pharmacist</p>
+                    </div>
+                </div>
+                <div id="status" class="status-badge disconnected">Disconnected</div>
+            </div>
+            
+            <div class="chat-controls">
+                <div class="control-row">
+                    <button id="langBtn" class="control-btn" onclick="toggleLanguage()">🇮🇱 HE</button>
+                    <button id="muteBtn" class="control-btn" onclick="toggleMute()" disabled>🎤 Mute</button>
+                    <button id="toggleToolsBtn" class="control-btn" onclick="toggleToolCalls()" disabled>🔧 Hide Tools</button>
+                    <button id="downloadLogsBtn" class="control-btn" onclick="downloadLogs()">📥 Logs</button>
+                </div>
+                <div id="debug" class="debug-info"></div>
+            </div>
+            
+            <div class="chat-messages" id="transcript">
+                <!-- Messages will be inserted here -->
+            </div>
+            
+            <div class="chat-input-container">
+                <textarea class="chat-input" id="textInput" placeholder="Type a message..." rows="1" disabled></textarea>
+                <button class="chat-send-btn" id="sendBtn" onclick="sendTextMessage()" disabled>Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Graphics & Animation -->
+    <script src="graphics/character.js"></script>
+    
+    <!-- Modular Application Architecture -->
+    <script src="js/logger.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/securityUI.js"></script>
+    <script src="js/rtcManager.js"></script>
+    <script src="js/uiManager.js"></script>
+    <script src="js/eventHandler.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

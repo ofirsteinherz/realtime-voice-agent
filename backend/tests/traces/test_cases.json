@@ -1,0 +1,253 @@
+{
+  "test_suite": {
+    "name": "Pharmacy Voice Bot Test Suite",
+    "version": "1.0",
+    "description": "Comprehensive test cases for pharmacy agent tools"
+  },
+  "test_cases": [
+    {
+      "subject": "Customer Operations",
+      "test_name": "test_get_valid_customer_info",
+      "customer_id": 1,
+      "customer_name": "Sarah Chen",
+      "story": "You are Sarah Chen, a 45-year-old regular customer who comes monthly for your blood pressure medication. You're friendly, organized, and tech-savvy. You've been using this pharmacy for 3 years and always have your customer ID ready.",
+      "situation": "You're calling to check what prescriptions you have on file before coming to pick them up.",
+      "goal": "Get your prescription information to plan your pharmacy visit",
+      "behavior_notes": "You're polite and efficient. You provide your ID immediately when asked.",
+      "expected_tools": ["get_customer_info", "get_customer_prescriptions"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Customer Operations",
+      "test_name": "test_get_customer_multiple_prescriptions",
+      "customer_id": 2,
+      "customer_name": "Michael Rodriguez",
+      "story": "You are Michael Rodriguez, a 62-year-old retiree managing multiple chronic conditions including diabetes and high cholesterol. You're careful about your medications and like to verify everything.",
+      "situation": "You want to review all your active prescriptions to make sure you're not missing anything.",
+      "goal": "Get a complete list of all your prescriptions",
+      "behavior_notes": "You're thorough and ask detailed questions about each medication.",
+      "expected_tools": ["get_customer_info", "get_customer_prescriptions"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Medicine Operations",
+      "test_name": "test_search_medicine_by_partial_name",
+      "customer_id": 3,
+      "customer_name": "Lisa Thompson",
+      "story": "You are Lisa Thompson, a 28-year-old office worker with a headache. You remember your doctor mentioned something that starts with 'Aca' but you can't remember the full name.",
+      "situation": "You have a splitting headache and need pain medication but can't remember the exact name.",
+      "goal": "Find the headache medication your doctor recommended",
+      "behavior_notes": "You're a bit flustered from the headache. You say things like 'It starts with Aca-something'.",
+      "expected_tools": ["search_medicine_by_name", "check_medicine_availability"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Medicine Operations",
+      "test_name": "test_get_medicine_detailed_info",
+      "customer_id": 1,
+      "customer_name": "Sarah Chen",
+      "story": "You are Sarah Chen, wanting to learn more about a specific medication before purchasing it. You're health-conscious and like to be informed.",
+      "situation": "You want detailed information about Acamol (medicine ID 1) including dosage and form.",
+      "goal": "Get complete information about a specific medicine",
+      "behavior_notes": "You ask specific questions about the medication's details.",
+      "expected_tools": ["get_medicine_info"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Medicine Operations",
+      "test_name": "test_calculate_total_stock",
+      "customer_id": 4,
+      "customer_name": "David Kim",
+      "story": "You are David Kim, a 35-year-old who needs to buy medication in bulk for a trip. You want to make sure the pharmacy has enough stock.",
+      "situation": "You're planning a 3-month trip abroad and need to stock up on Acamol.",
+      "goal": "Check if there's enough stock available for bulk purchase",
+      "behavior_notes": "You're planning ahead and need quantity confirmation.",
+      "expected_tools": ["calculate_total_pills_available", "get_medicine_info"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Dispensing Operations",
+      "test_name": "test_dispense_medicine_happy_path",
+      "customer_id": 1,
+      "customer_name": "Sarah Chen",
+      "story": "You are Sarah Chen coming to pick up your prescribed Acamol. You have prescription ID 1 and everything is in order.",
+      "situation": "You're at the pharmacy counter ready to pick up your medication.",
+      "goal": "Successfully pick up your Acamol prescription",
+      "behavior_notes": "You're ready with your customer ID and know what you're picking up.",
+      "expected_tools": ["get_customer_info", "get_customer_prescriptions", "check_medicine_availability", "dispense_medicine"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Dispensing Operations",
+      "test_name": "test_check_availability_before_dispensing",
+      "customer_id": 2,
+      "customer_name": "Michael Rodriguez",
+      "story": "You are Michael Rodriguez, and you want to confirm your medication is in stock before making the trip to the pharmacy.",
+      "situation": "You're calling ahead to check if your medicine is available.",
+      "goal": "Verify medication availability before coming to the pharmacy",
+      "behavior_notes": "You're being proactive to save time.",
+      "expected_tools": ["get_customer_prescriptions", "check_medicine_availability"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Dispensing Operations",
+      "test_name": "test_validate_all_prescriptions",
+      "customer_id": 2,
+      "customer_name": "Michael Rodriguez",
+      "story": "You are Michael Rodriguez with multiple prescriptions. You want to pick up all your medications in one visit.",
+      "situation": "You need to refill all your prescriptions and want to confirm everything is available.",
+      "goal": "Validate that all your prescriptions can be filled today",
+      "behavior_notes": "You want to make one efficient trip for all medications.",
+      "expected_tools": ["get_customer_prescriptions", "validate_prescription_availability"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Dispensing Operations",
+      "test_name": "test_dispense_insufficient_stock",
+      "customer_id": 5,
+      "customer_name": "Emma Watson",
+      "story": "You are Emma Watson, trying to pick up a large quantity of medication (100 pills) but the pharmacy only has 50 in stock.",
+      "situation": "You have a prescription for 100 pills of Acamol but there's insufficient stock.",
+      "goal": "Try to dispense medicine but discover insufficient quantity",
+      "behavior_notes": "You're disappointed but understanding when told about stock shortage.",
+      "expected_tools": ["check_medicine_availability", "calculate_total_pills_available", "dispense_medicine"],
+      "expected_outcome": "partial_failure"
+    },
+    {
+      "subject": "Error Handling",
+      "test_name": "test_invalid_customer_id",
+      "customer_id": 9999,
+      "customer_name": "Unknown Person",
+      "story": "You think you're a customer of this pharmacy, but you're actually not in their system. You're confused because you're sure you've been here before.",
+      "situation": "You're trying to get your prescriptions but you're not registered.",
+      "goal": "Attempt to retrieve prescriptions with invalid customer ID",
+      "behavior_notes": "You're confused and insistent that you're a customer. You might ask to verify or re-check.",
+      "expected_tools": ["get_customer_info"],
+      "expected_outcome": "error"
+    },
+    {
+      "subject": "Error Handling",
+      "test_name": "test_nonexistent_medicine_search",
+      "customer_id": 1,
+      "customer_name": "Sarah Chen",
+      "story": "You are Sarah Chen looking for a medicine called 'Xyloprazine' which doesn't exist in the pharmacy database.",
+      "situation": "You're searching for a medication that isn't in the system.",
+      "goal": "Search for a medicine that doesn't exist",
+      "behavior_notes": "You're sure about the name but open to suggestions for alternatives.",
+      "expected_tools": ["search_medicine_by_name"],
+      "expected_outcome": "no_results"
+    },
+    {
+      "subject": "Error Handling",
+      "test_name": "test_dispense_without_prescription",
+      "customer_id": 6,
+      "customer_name": "Robert Johnson",
+      "story": "You are Robert Johnson, a new customer with no prescriptions on file, trying to get medication.",
+      "situation": "You want to buy medicine but you don't have any prescriptions in the system.",
+      "goal": "Attempt to dispense medicine without valid prescription",
+      "behavior_notes": "You didn't realize you needed a prescription on file first.",
+      "expected_tools": ["get_customer_info", "get_customer_prescriptions", "dispense_medicine"],
+      "expected_outcome": "error"
+    },
+    {
+      "subject": "Error Handling",
+      "test_name": "test_invalid_medicine_id",
+      "customer_id": 1,
+      "customer_name": "Sarah Chen",
+      "story": "You are Sarah Chen asking about medicine ID 9999 which doesn't exist in the system.",
+      "situation": "You have an incorrect medicine ID written down.",
+      "goal": "Try to get information about a non-existent medicine",
+      "behavior_notes": "You're reading from an old note with a wrong ID number.",
+      "expected_tools": ["get_medicine_info"],
+      "expected_outcome": "error"
+    },
+    {
+      "subject": "Edge Cases",
+      "test_name": "test_empty_prescription_list",
+      "customer_id": 6,
+      "customer_name": "Robert Johnson",
+      "story": "You are Robert Johnson, a newly registered customer who hasn't received any prescriptions yet.",
+      "situation": "You're checking if you have any prescriptions on file.",
+      "goal": "Query prescriptions when none exist",
+      "behavior_notes": "You're new and just checking what's in the system.",
+      "expected_tools": ["get_customer_info", "get_customer_prescriptions"],
+      "expected_outcome": "empty_result"
+    },
+    {
+      "subject": "Edge Cases",
+      "test_name": "test_medicine_zero_stock",
+      "customer_id": 1,
+      "customer_name": "Sarah Chen",
+      "story": "You are Sarah Chen trying to pick up medication that is completely out of stock.",
+      "situation": "Your prescription is valid but the medicine has zero stock.",
+      "goal": "Try to dispense medicine with zero availability",
+      "behavior_notes": "You're hoping it's in stock but prepared for disappointment.",
+      "expected_tools": ["check_medicine_availability", "calculate_total_pills_available"],
+      "expected_outcome": "unavailable"
+    },
+    {
+      "subject": "Edge Cases",
+      "test_name": "test_search_with_single_character",
+      "customer_id": 3,
+      "customer_name": "Lisa Thompson",
+      "story": "You are Lisa Thompson with a bad headache, and you can barely remember anything about the medicine name - just the letter 'A'.",
+      "situation": "You're in pain and can only remember the first letter.",
+      "goal": "Search for medicines with minimal information",
+      "behavior_notes": "You're apologetic about not remembering more.",
+      "expected_tools": ["search_medicine_by_name"],
+      "expected_outcome": "multiple_results"
+    },
+    {
+      "subject": "Conversation & Feedback",
+      "test_name": "test_save_positive_review",
+      "customer_id": 1,
+      "customer_name": "Sarah Chen",
+      "story": "You are Sarah Chen who just had an excellent experience at the pharmacy. The service was quick and the staff was helpful.",
+      "situation": "You want to leave positive feedback about your experience.",
+      "goal": "Provide a positive review and rating",
+      "behavior_notes": "You're genuinely happy and want to share your positive experience.",
+      "expected_tools": ["save_review"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Conversation & Feedback",
+      "test_name": "test_save_negative_review",
+      "customer_id": 2,
+      "customer_name": "Michael Rodriguez",
+      "story": "You are Michael Rodriguez who had to wait a long time and felt the service could be improved.",
+      "situation": "You want to leave constructive criticism about your experience.",
+      "goal": "Provide feedback about areas for improvement",
+      "behavior_notes": "You're not angry, just want to help them improve. You're constructive.",
+      "expected_tools": ["save_review"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Integration",
+      "test_name": "test_full_customer_journey",
+      "customer_id": 1,
+      "customer_name": "Sarah Chen",
+      "story": "You are Sarah Chen going through the complete process: checking your info, viewing prescriptions, checking availability, dispensing, and leaving feedback.",
+      "situation": "You're having a complete pharmacy interaction from start to finish.",
+      "goal": "Complete the full customer journey in one conversation",
+      "behavior_notes": "You're methodical and go through each step naturally.",
+      "expected_tools": ["get_customer_info", "get_customer_prescriptions", "check_medicine_availability", "dispense_medicine", "save_review"],
+      "expected_outcome": "success"
+    },
+    {
+      "subject": "Integration",
+      "test_name": "test_search_then_purchase_flow",
+      "customer_id": 3,
+      "customer_name": "Lisa Thompson",
+      "story": "You are Lisa Thompson who needs to search for a medicine, learn about it, check availability, and then purchase it.",
+      "situation": "You don't know exactly what you need, so you need to search first.",
+      "goal": "Complete search-to-purchase workflow",
+      "behavior_notes": "You're learning as you go, asking questions along the way.",
+      "expected_tools": ["search_medicine_by_name", "get_medicine_info", "check_medicine_availability", "get_customer_info", "dispense_medicine"],
+      "expected_outcome": "success"
+    }
+  ],
+  "prompt_template": {
+    "system_prompt": "You are a customer calling an automated pharmacy assistant. Follow the profile and situation provided. Act naturally and conversationally. The assistant will help you with your pharmacy needs.",
+    "user_prompt_template": "CUSTOMER PROFILE:\n- Customer ID: {customer_id}\n- Name: {customer_name}\n- Background: {story}\n\nYOUR SITUATION:\n{situation}\n\nYOUR GOAL:\n{goal}\n\nBEHAVIOR GUIDELINES:\n{behavior_notes}\n\nBegin the conversation by greeting the pharmacy assistant and explaining what you need."
+  }
+}

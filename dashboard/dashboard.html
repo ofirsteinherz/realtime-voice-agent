@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Dashboard — Voice Bot Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@0.463.0/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    :focus-visible { outline: 2px solid rgba(59,130,246,.8); outline-offset: 2px; border-radius: 8px; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px) scale(0.98); filter: blur(4px);} to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0);} }
+    @keyframes fadeIn { from { opacity: 0; filter: blur(6px);} to { opacity: 1; filter: blur(0);} }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(12px);} to { opacity: 1; transform: translateX(0);} }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .pulse-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+  </style>
+</head>
+<body class="text-gray-100 antialiased bg-neutral-950 bg-[radial-gradient(60%_40%_at_50%_0%,rgba(99,102,241,0.15),rgba(0,0,0,0)_70%)]" style="font-family: Inter, ui-sans-serif, system-ui;">
+  
+  <!-- Header -->
+  <header class="max-w-7xl flex ring-1 ring-white/10 bg-white/5 rounded-2xl mt-6 mr-auto mb-6 ml-auto pt-6 pr-6 pb-6 pl-6 backdrop-blur-md items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-indigo-500/20 ring-1 ring-indigo-500/30 backdrop-blur">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot text-indigo-400"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
+      </span>
+      <div>
+        <div class="text-sm font-semibold tracking-tight font-geist text-gray-100">AI Agent Dashboard</div>
+        <div class="text-xs text-gray-400 font-geist">Voice Bot Analytics & Monitoring</div>
+      </div>
+    </div>
+    
+    <div class="flex gap-3 items-center">
+      <div class="hidden sm:flex items-center gap-2 text-xs text-gray-400 font-geist">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="h-2 w-2 rounded-full bg-green-400 pulse-dot"></span>
+          Live
+        </span>
+        <span class="text-gray-500">•</span>
+        <span id="current-time">--:--:--</span>
+      </div>
+      <button onclick="refreshData()" class="inline-flex hover:bg-white/80 transition-colors duration-150 gap-2 text-sm font-semibold text-gray-900 bg-white/90 border-white/20 border rounded-full pt-2 pr-4 pb-2 pl-4 shadow items-center font-geist">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mr-auto ml-auto pr-6 pl-6">
+    
+    <!-- KPI Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <!-- Card 1: Conversations -->
+      <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-sm ring-1 ring-white/15" style="animation: fadeUp .6s ease-out both; animation-delay: .05s;">
+        <div class="flex items-center justify-between">
+          <div class="text-xs text-gray-400 font-geist">7 DAYS</div>
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-blue-500/20 ring-1 ring-blue-500/30 backdrop-blur">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-messages-square text-blue-400"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path></svg>
+          </span>
+        </div>
+        <div class="mt-3 text-3xl font-bold tracking-tight font-geist text-gray-100" id="total-conversations">4</div>
+        <p class="mt-2 text-xs text-gray-300 font-geist">Total conversations</p>
+        <div class="mt-3 flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 text-[11px] ring-1 ring-green-500/20 text-green-300 bg-green-500/10 rounded-full pt-0.5 pr-2 pb-0.5 pl-2 font-geist">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+            +8.2%
+          </span>
+          <span class="text-[11px] text-gray-400 font-geist">vs last week</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Reviews -->
+      <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-sm ring-1 ring-white/15" style="animation: fadeUp .6s ease-out both; animation-delay: .12s;">
+        <div class="flex items-center justify-between">
+          <div class="text-xs text-gray-400 font-geist">FEEDBACK</div>
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-yellow-500/20 ring-1 ring-yellow-500/30 backdrop-blur">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star text-yellow-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </span>
+        </div>
+        <div class="mt-3 text-3xl font-bold tracking-tight font-geist text-gray-100" id="total-reviews">5</div>
+        <p class="mt-2 text-xs text-gray-300 font-geist">Customer reviews</p>
+        <div class="mt-3 flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-300 ring-1 ring-yellow-500/20 font-geist">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+            92% positive
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 3: Messages -->
+      <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-sm ring-1 ring-white/15" style="animation: fadeUp .6s ease-out both; animation-delay: .19s;">
+        <div class="flex items-center justify-between">
+          <div class="text-xs text-gray-400 font-geist">AVERAGE</div>
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-purple-500/20 ring-1 ring-purple-500/30 backdrop-blur">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle text-purple-400"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>
+          </span>
+        </div>
+        <div class="mt-3 text-3xl font-bold tracking-tight font-geist text-gray-100" id="avg-messages">4.25</div>
+        <p class="mt-2 text-xs text-gray-300 font-geist">Messages per conversation</p>
+        <div class="mt-3 flex items-center gap-2">
+          <span class="text-[11px] text-gray-400 font-geist">Range: 2-8 messages</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Security -->
+      <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-sm ring-1 ring-white/15" style="animation: fadeUp .6s ease-out both; animation-delay: .26s;">
+        <div class="flex items-center justify-between">
+          <div class="text-xs text-gray-400 font-geist">SECURITY</div>
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-green-500/20 ring-1 ring-green-500/30 backdrop-blur">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check text-green-400"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+          </span>
+        </div>
+        <div class="mt-3 text-3xl font-bold tracking-tight font-geist text-gray-100" id="suspicious-count">0</div>
+        <p class="mt-2 text-xs text-gray-300 font-geist">Suspicious messages</p>
+        <div class="mt-3 flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-300 ring-1 ring-green-500/20 font-geist">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"></path></svg>
+            All clear
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Row -->
+    <section class="grid lg:grid-cols-3 gap-6 mb-6">
+      <!-- Recent Conversations -->
+      <div class="lg:col-span-2 bg-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-7 shadow-sm ring-1 ring-white/15" style="animation: fadeUp .7s ease-out both; animation-delay: .1s;">
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-lg md:text-xl font-semibold tracking-tight font-geist text-gray-100">Recent Conversations</h2>
+            <p class="text-xs text-gray-400 mt-1 font-geist">Last message preview</p>
+          </div>
+          <button class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-white/10 border border-white/15 hover:bg-white/20 text-gray-100 backdrop-blur font-geist">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+            Export
+          </button>
+        </div>
+
+        <div class="space-y-3" id="recent-conversations-list">
+          <!-- Will be populated by JavaScript -->
+          <div class="text-center text-gray-400 text-sm py-8">Loading conversations...</div>
+        </div>
+      </div>
+
+      <!-- Recent Reviews -->
+      <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-7 shadow-sm ring-1 ring-white/15" style="animation: fadeUp .7s ease-out both; animation-delay: .18s;">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold tracking-tight text-gray-100 font-geist">Recent Feedback</h3>
+            <p class="text-xs text-gray-400 mt-1 font-geist">Customer reviews</p>
+          </div>
+        </div>
+        
+        <div class="space-y-3">
+          <div class="p-3 bg-white/5 rounded-lg border border-white/10">
+            <div class="flex items-start gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star text-yellow-400 mt-0.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <div class="flex-1">
+                <p class="text-xs text-gray-300 font-geist">"Clean and organized place. Friendly and professional staff."</p>
+                <p class="text-[11px] text-gray-400 mt-1 font-geist">Customer 1 • 8h ago</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-white/5 rounded-lg border border-white/10">
+            <div class="flex items-start gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star text-yellow-400 mt-0.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <div class="flex-1">
+                <p class="text-xs text-gray-300 font-geist">"I received the medications quickly. Highly recommend!"</p>
+                <p class="text-[11px] text-gray-400 mt-1 font-geist">Customer 2 • 1d ago</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-white/5 rounded-lg border border-white/10">
+            <div class="flex items-start gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star text-yellow-400 mt-0.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <div class="flex-1">
+                <p class="text-xs text-gray-300 font-geist">"The pharmacist helped me find a cheaper alternative to the medication."</p>
+                <p class="text-[11px] text-gray-400 mt-1 font-geist">Customer 4 • 2d ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security & Test Results Row -->
+    <section class="grid lg:grid-cols-2 gap-6 mb-6">
+      <!-- Security Analysis -->
+      <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-7 shadow-sm ring-1 ring-white/15" style="animation: fadeUp .7s ease-out both; animation-delay: .2s;">
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-lg md:text-xl font-semibold tracking-tight font-geist text-gray-100">Security Analysis</h2>
+            <p class="text-xs text-gray-400 mt-1 font-geist">Dual-model content moderation</p>
+          </div>
+          <span class="inline-flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg bg-green-500/10 text-green-300 ring-1 ring-green-500/20 font-geist">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            All Safe
+          </span>
+        </div>
+
+        <!-- Compact Metrics Grid -->
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <!-- OpenAI Moderation -->
+          <div class="p-3 bg-white/5 rounded-xl border border-white/10">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="flex-none w-6 h-6 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-brain text-blue-400"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"></path><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"></path><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"></path><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"></path><path d="M3.477 10.896a4 4 0 0 1 .585-.396"></path><path d="M19.938 10.5a4 4 0 0 1 .585.396"></path><path d="M6 18a4 4 0 0 1-1.967-.516"></path><path d="M19.967 17.484A4 4 0 0 1 18 18"></path></svg>
+              </span>
+              <div class="text-xs font-semibold text-gray-100 font-geist">OpenAI</div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <div class="text-2xl font-bold text-gray-100 font-geist">0</div>
+              <div class="text-xs text-gray-400 font-geist">/ 0 flagged</div>
+            </div>
+          </div>
+
+          <!-- Llama Guard -->
+          <div class="p-3 bg-white/5 rounded-xl border border-white/10">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="flex-none w-6 h-6 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-alert text-purple-400"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+              </span>
+              <div class="text-xs font-semibold text-gray-100 font-geist">Llama Guard</div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <div class="text-2xl font-bold text-gray-100 font-geist">0</div>
+              <div class="text-xs text-gray-400 font-geist">/ 0 attacks</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Attacks Section -->
+        <div id="recent-attacks-section" class="hidden">
+          <div class="text-xs font-semibold text-gray-300 mb-2 font-geist">🚨 Recent Attacks</div>
+          <div class="space-y-2" id="recent-attacks-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- No Attacks Message -->
+        <div id="no-attacks-message" class="p-3 bg-green-500/5 rounded-lg border border-green-500/20 text-center">
+          <div class="text-xs text-green-300 font-geist">✓ All messages passed security checks</div>
+        </div>
+      </div>
+
+      <!-- Test Results -->
+      <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-7 shadow-sm ring-1 ring-white/15" style="animation: fadeUp .7s ease-out both; animation-delay: .18s;">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold tracking-tight text-gray-100 font-geist">Test Results</h3>
+            <p class="text-xs text-gray-400 mt-1 font-geist">Recent test executions</p>
+          </div>
+        </div>
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+            <div class="flex items-center gap-2">
+              <span class="flex-none w-8 h-8 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check text-green-400"><path d="M20 6 9 17l-5-5"></path></svg>
+              </span>
+              <div>
+                <div class="text-xs font-medium text-gray-100 font-geist">Success</div>
+                <div class="text-[11px] text-gray-400 font-geist">2 tests</div>
+              </div>
+            </div>
+            <div class="text-xl font-bold text-green-400 font-geist">100%</div>
+          </div>
+
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+            <div class="flex items-center gap-2">
+              <span class="flex-none w-8 h-8 rounded-lg bg-red-500/20 border border-red-500/30 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-red-400"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </span>
+              <div>
+                <div class="text-xs font-medium text-gray-100 font-geist">Failed</div>
+                <div class="text-[11px] text-gray-400 font-geist">0 tests</div>
+              </div>
+            </div>
+            <div class="text-xl font-bold text-gray-500 font-geist">0%</div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-white/10">
+          <div class="text-xs text-gray-400 font-geist mb-2">Recent tests (click to view):</div>
+          <div class="space-y-2">
+            <div onclick="showTest('test_1')" class="flex items-center gap-2 text-xs cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check text-green-400"><path d="M20 6 9 17l-5-5"></path></svg>
+              <span class="text-gray-300 font-geist truncate">test_get_valid_customer_info (1 turn)</span>
+            </div>
+            <div onclick="showTest('test_2')" class="flex items-center gap-2 text-xs cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check text-green-400"><path d="M20 6 9 17l-5-5"></path></svg>
+              <span class="text-gray-300 font-geist truncate">test_get_valid_customer_info (2 turns)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Usage Statistics -->
+    <section class="bg-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-7 shadow-sm ring-1 ring-white/15 mb-6" style="animation: fadeUp .7s ease-out both; animation-delay: .25s;">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h2 class="text-lg md:text-xl font-semibold tracking-tight font-geist text-gray-100">Tool Usage Statistics</h2>
+          <p class="text-xs text-gray-400 mt-1 font-geist">Popular pharmacy tool calls</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-white/10 border border-white/15 text-gray-100 backdrop-blur font-geist">
+            <span class="text-indigo-400 font-semibold">6</span> total calls
+          </span>
+        </div>
+      </div>
+      <div class="mt-6 grid md:grid-cols-2 gap-6">
+        <div class="relative h-[300px]">
+          <canvas id="toolUsageChart"></canvas>
+        </div>
+        <div class="space-y-3">
+          <div class="text-xs font-semibold text-gray-300 mb-2 font-geist">Recent Tool Calls with Arguments:</div>
+          
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-flex items-center justify-center h-6 w-6 rounded bg-indigo-500/20 ring-1 ring-indigo-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user text-indigo-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </span>
+              <div class="text-xs font-medium text-gray-200 font-geist">get_customer_info</div>
+            </div>
+            <div class="text-[11px] text-gray-400 font-mono bg-black/20 rounded p-2 font-geist">
+              { customer_id: 1 }
+            </div>
+          </div>
+
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-flex items-center justify-center h-6 w-6 rounded bg-purple-500/20 ring-1 ring-purple-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text text-purple-400"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+              </span>
+              <div class="text-xs font-medium text-gray-200 font-geist">get_customer_prescriptions</div>
+            </div>
+            <div class="text-[11px] text-gray-400 font-mono bg-black/20 rounded p-2 font-geist">
+              { customer_id: 1 }
+            </div>
+          </div>
+
+          <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-flex items-center justify-center h-6 w-6 rounded bg-pink-500/20 ring-1 ring-pink-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pill text-pink-400"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path></svg>
+              </span>
+              <div class="text-xs font-medium text-gray-200 font-geist">get_medicine_info</div>
+            </div>
+            <div class="text-[11px] text-gray-400 font-mono bg-black/20 rounded p-2 font-geist">
+              { medicine_id: 7 }<br>
+              { medicine_id: 1 }
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mt-4">
+            <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+              <div class="text-xs text-gray-400 font-geist">Conversations</div>
+              <div class="text-2xl font-bold text-gray-100 mt-1 font-geist" id="conv-tools">0</div>
+            </div>
+            <div class="bg-white/5 rounded-lg p-3 border border-white/10">
+              <div class="text-xs text-gray-400 font-geist">Tests</div>
+              <div class="text-2xl font-bold text-gray-100 mt-1 font-geist" id="test-tools">6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto px-6 py-10 mt-12 border-t border-white/10">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="text-sm font-semibold tracking-tight font-geist text-gray-100">Voice Bot Analytics</div>
+          <p class="text-xs text-gray-400 font-geist">© <span id="year">2025</span> All rights reserved.</p>
+        </div>
+        <div class="flex items-center gap-3 text-xs text-gray-400 font-geist">
+          <span>Last updated: <span id="last-updated">--:--:--</span></span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Modal removed - conversations now open in new page -->
+
+  <script>
+    // API Configuration
+    const API_URL = 'http://localhost:8002/api/metrics';
+    
+    // Global metrics data
+    let metricsData = null;
+    let liveConversations = {};
+    
+    // Fetch metrics from API
+    async function fetchMetrics() {
+      try {
+        console.log('🌐 Fetching metrics from:', API_URL);
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Failed to fetch metrics');
+        const data = await response.json();
+        console.log('📥 Received data from API:', data);
+        console.log('🔒 Security data:', data.suspicious_messages);
+        metricsData = data;
+        return data;
+      } catch (error) {
+        console.error('❌ Error fetching metrics:', error);
+        return null;
+      }
+    }
+    
+    // Update dashboard with metrics data
+    function updateDashboard(data) {
+      console.log('🎨 updateDashboard called with data:', !!data);
+      if (!data) {
+        console.warn('⚠️ No data provided to updateDashboard');
+        return;
+      }
+      
+      console.log('📊 Updating KPI cards...');
+      // Update KPI cards
+      document.getElementById('total-conversations').textContent =
+        data.conversations_last_week?.total_count || 0;
+      
+      document.getElementById('total-reviews').textContent =
+        data.reviews?.total_count || 0;
+      
+      document.getElementById('avg-messages').textContent =
+        data.messages_per_conversation?.average_messages?.toFixed(2) || '0.00';
+      
+      document.getElementById('suspicious-count').textContent =
+        data.suspicious_messages?.total_suspicious || 0;
+      
+      console.log('💬 Updating recent conversations...');
+      updateRecentConversations(data.conversations_last_week?.conversations || []);
+      
+      console.log('� Calling updateSecurityMetrics...');
+      // Update security metrics
+      updateSecurityMetrics(data.suspicious_messages || {});
+      
+      // Update tool usage stats
+      const toolUsage = data.tool_usage || {};
+      document.getElementById('conv-tools').textContent =
+        toolUsage.from_conversations || 0;
+      document.getElementById('test-tools').textContent =
+        toolUsage.from_tests || 0;
+      
+      // Update tool chart if available
+      updateToolChart(toolUsage.tool_breakdown || {});
+      
+      // Update last updated time
+      updateTime();
+    }
+    
+    // Update security analysis section with moderation metrics
+    function updateSecurityMetrics(securityData) {
+      console.log('🔒 updateSecurityMetrics called with:', securityData);
+      
+      const totalChecks = securityData.total_moderation_checks || 0;
+      const totalSuspicious = securityData.total_suspicious || 0;
+      const openaiCategories = securityData.openai_categories || {};
+      const llamaAttacks = securityData.llama_attacks || 0;
+      
+      console.log('📊 Security Metrics:', {
+        totalChecks,
+        totalSuspicious,
+        openaiCategories,
+        llamaAttacks
+      });
+      
+      // Calculate OpenAI flagged count (sum of all categories)
+      const openaiFlagged = Object.values(openaiCategories).reduce((a, b) => a + b, 0);
+      console.log('✅ OpenAI flagged count:', openaiFlagged);
+      
+      // Find the compact metric boxes in Security Analysis section
+      const securitySection = document.querySelector('.space-y-4')?.parentElement || document;
+      const metricBoxes = securitySection.querySelectorAll('.grid.grid-cols-2 > div');
+      console.log('📦 Found compact metric boxes:', metricBoxes.length);
+      
+      if (metricBoxes.length >= 2) {
+        // First box is OpenAI
+        const openaiBox = metricBoxes[0];
+        const openaiMainNum = openaiBox.querySelector('.text-2xl');
+        const openaiSecondary = openaiBox.querySelector('.text-xs.text-gray-400');
+        
+        if (openaiMainNum && openaiSecondary) {
+          openaiMainNum.textContent = totalChecks;
+          openaiSecondary.textContent = `/ ${openaiFlagged} flagged`;
+          openaiMainNum.className = openaiFlagged > 0
+            ? 'text-2xl font-bold text-red-400 font-geist'
+            : 'text-2xl font-bold text-green-400 font-geist';
+          console.log('✅ OpenAI compact metrics updated - Checks:', totalChecks, 'Flagged:', openaiFlagged);
+        }
+        
+        // Second box is Llama Guard
+        const llamaBox = metricBoxes[1];
+        const llamaMainNum = llamaBox.querySelector('.text-2xl');
+        const llamaSecondary = llamaBox.querySelector('.text-xs.text-gray-400');
+        
+        if (llamaMainNum && llamaSecondary) {
+          llamaMainNum.textContent = totalChecks;
+          llamaSecondary.textContent = `/ ${llamaAttacks} attacks`;
+          llamaMainNum.className = llamaAttacks > 0
+            ? 'text-2xl font-bold text-red-400 font-geist'
+            : 'text-2xl font-bold text-green-400 font-geist';
+          console.log('✅ Llama compact metrics updated - Checks:', totalChecks, 'Attacks:', llamaAttacks);
+        }
+      } else {
+        console.error('❌ Could not find compact metric boxes. Found:', metricBoxes.length, 'expected: 2');
+      }
+      
+      // Show/hide recent attacks section and update badge
+      const suspiciousMessages = securityData.suspicious_messages || [];
+      const recentAttacksSection = document.getElementById('recent-attacks-section');
+      const noAttacksMessage = document.getElementById('no-attacks-message');
+      const securityBadge = document.getElementById('security-badge');
+      
+      if (totalSuspicious > 0 && suspiciousMessages.length > 0) {
+        // Show recent attacks
+        if (recentAttacksSection) {
+          recentAttacksSection.classList.remove('hidden');
+          updateRecentAttacks(suspiciousMessages, totalChecks);
+        }
+        if (noAttacksMessage) noAttacksMessage.classList.add('hidden');
+        
+        // Update badge to show alert
+        if (securityBadge) {
+          securityBadge.className = 'inline-flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-300 ring-1 ring-red-500/20 font-geist';
+          securityBadge.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-alert"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+            ${totalSuspicious} Alert${totalSuspicious > 1 ? 's' : ''}
+          `;
+        }
+      } else {
+        // Hide recent attacks
+        if (recentAttacksSection) recentAttacksSection.classList.add('hidden');
+        if (noAttacksMessage) noAttacksMessage.classList.remove('hidden');
+      }
+    }
+    
+    // Update recent conversations list with last message preview
+    function updateRecentConversations(conversations) {
+      const listEl = document.getElementById('recent-conversations-list');
+      if (!listEl) return;
+      
+      if (!conversations || conversations.length === 0) {
+        listEl.innerHTML = '<div class="text-center text-gray-400 text-sm py-8">No conversations found</div>';
+        return;
+      }
+      
+      // Sort by timestamp (most recent first) and take top 4
+      const sorted = conversations.sort((a, b) => 
+        new Date(b.timestamp) - new Date(a.timestamp)
+      ).slice(0, 4);
+      
+      const html = sorted.map((conv, idx) => {
+        const sessionShort = conv.session_id.substring(0, 8) + '...';
+        const timeAgo = getTimeAgo(conv.timestamp);
+        const customer = conv.customer_id || 'unknown';
+        
+        // Get last message from messages array or use fallback
+        let lastMsg = 'No messages available';
+        if (conv.messages && conv.messages.length > 0) {
+          const lastMessage = conv.messages[conv.messages.length - 1];
+          lastMsg = lastMessage.content || lastMsg;
+        } else if (conv.last_message) {
+          lastMsg = conv.last_message;
+        }
+        
+        const lastMsgTruncated = lastMsg.length > 80 ? lastMsg.substring(0, 80) + '...' : lastMsg;
+        
+        // Store conversation data for modal access
+        const convKey = `live_${idx}`;
+        liveConversations[convKey] = {
+          session_id: conv.session_id,
+          customer: customer,
+          messages: conv.messages || []
+        };
+        
+        return `
+          <div onclick="showConversation('${convKey}')" class="hover:bg-white/5 transition-colors p-4 rounded-xl border border-white/10 cursor-pointer">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-xs font-mono text-gray-300 font-geist">${sessionShort}</span>
+                  <span class="inline-flex items-center gap-1.5 text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-500/20 font-geist">
+                    ${conv.message_count} msgs
+                  </span>
+                </div>
+                <p class="text-xs text-gray-400 font-geist">Customer: ${customer} • ${timeAgo}</p>
+                <p class="text-[11px] text-gray-500 font-geist mt-1.5 line-clamp-2">"${lastMsgTruncated}"</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      listEl.innerHTML = html;
+    }
+    
+    // Helper: Get time ago string
+    function getTimeAgo(timestamp) {
+      const now = new Date();
+      const past = new Date(timestamp);
+      const diffMs = now - past;
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffHours / 24);
+      
+      if (diffDays > 0) return `${diffDays}d ago`;
+      if (diffHours > 0) return `${diffHours}h ago`;
+      return 'Just now';
+    }
+    
+    // Update recent attacks list with percentages
+    function updateRecentAttacks(messages, totalChecks) {
+      const listEl = document.getElementById('recent-attacks-list');
+      if (!listEl) return;
+      
+      // Show top 3 most recent attacks
+      const recent = messages.slice(0, 3);
+      
+      const html = recent.map(msg => {
+        const percentage = totalChecks > 0 ? ((1 / totalChecks) * 100).toFixed(1) : 0;
+        const messagePreview = (msg.message || '').substring(0, 50);
+        const timeAgo = msg.timestamp ? getTimeAgo(msg.timestamp) : 'Unknown';
+        
+        // Determine which model flagged it
+        const badges = [];
+        if (msg.openai_flagged) {
+          badges.push(`<span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/30 font-geist">
+            OpenAI: ${msg.openai_category}
+          </span>`);
+        }
+        if (msg.llama_detected) {
+          badges.push(`<span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30 font-geist">
+            Llama: Injection
+          </span>`);
+        }
+        
+        return `
+          <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-2">
+            <div class="flex items-start justify-between gap-2 mb-1">
+              <div class="flex-1 min-w-0">
+                <div class="text-[11px] text-red-300 font-semibold font-geist mb-1">
+                  🚨 ${percentage}% of checks
+                </div>
+                <div class="flex flex-wrap gap-1 mb-1">
+                  ${badges.join('')}
+                </div>
+                <div class="text-[10px] text-gray-400 font-mono truncate">"${messagePreview}..."</div>
+              </div>
+            </div>
+            <div class="text-[10px] text-gray-500 font-geist">${timeAgo}</div>
+          </div>
+        `;
+      }).join('');
+      
+      listEl.innerHTML = html;
+    }
+    
+    // Update tool usage chart
+    function updateToolChart(toolBreakdown) {
+      const ctx = document.getElementById('toolUsageChart');
+      if (!ctx || !window.Chart) return;
+      
+      const labels = Object.keys(toolBreakdown);
+      const values = Object.values(toolBreakdown);
+      
+      if (labels.length === 0) return;
+      
+      // Destroy existing chart if it exists
+      if (window.toolChart) {
+        window.toolChart.destroy();
+      }
+      
+      const colors = [
+        'rgba(99, 102, 241, 0.8)',
+        'rgba(168, 85, 247, 0.8)',
+        'rgba(236, 72, 153, 0.8)',
+        'rgba(59, 130, 246, 0.8)',
+        'rgba(16, 185, 129, 0.8)'
+      ];
+      
+      window.toolChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors.slice(0, labels.length),
+            borderColor: colors.slice(0, labels.length).map(c => c.replace('0.8', '1')),
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: 'rgba(243,244,246,0.85)',
+                padding: 15,
+                font: { size: 11 }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(17,24,39,0.9)',
+              borderColor: 'rgba(255,255,255,0.1)',
+              borderWidth: 1,
+              titleColor: '#fff',
+              bodyColor: 'rgba(229,231,235,1)',
+              padding: 10,
+              displayColors: true
+            }
+          }
+        }
+      });
+    }
+    
+    // Sample conversation data (keeping for modal display)
+    const conversationData = {
+      'sess_CNJ': {
+        session_id: 'sess_CNJf9VWCfnfltQ43Fn4u4',
+        customer: 'Unknown',
+        messages: [
+          { role: 'user', content: 'hi', timestamp: '14:06:15' },
+          { role: 'assistant', content: 'שלום! איך אפשר לעזור לך היום בנושאי בית המרקחת?', timestamp: '14:06:16' },
+          { role: 'user', content: 'אני רוצה להכין פצצה', timestamp: '14:06:25' },
+          { role: 'assistant', content: 'אני כאן כדי לעזור לך רק בדברים שקשורים לבית המרקחת. אם יש לך שאלה על תרופה, מרשם או כל נושא רפואי אחר, אשמח לעזור.', timestamp: '14:06:27' },
+          { role: 'user', content: 'יופי מעולה', timestamp: '14:06:32' },
+          { role: 'assistant', content: 'יופי, אז בוא נתקדם. אם יש לך שאלה על תרופה, מרשם או כל נושא שקשור לבית המרקחת, אני כאן לעזור!', timestamp: '14:06:33' },
+          { role: 'user', content: 'האמת שלא', timestamp: '14:06:40' },
+          { role: 'assistant', content: 'אני כאן לעזור רק בנושאים שקשורים לבית המרקחת. אם יש משהו שתרצה לדעת בנושא הזה, אני זמין!', timestamp: '14:06:42' }
+        ]
+      },
+      'd642': {
+        session_id: 'd64236d7-2581-4ab4-a65d-d961c71f3b00',
+        customer: 'Customer 6',
+        messages: [
+          { role: 'user', content: 'Hello, I want to know when to take my medications', timestamp: '06:01:20' },
+          { role: 'assistant', content: "Hello! I'd be happy to help. What's the name of the medicine?", timestamp: '06:01:22' },
+          { role: 'user', content: 'Acamol', timestamp: '06:01:28' },
+          { role: 'assistant', content: 'Acamol can be taken up to 4 times a day, with water. Can be taken with or without food.', timestamp: '06:01:30' }
+        ]
+      },
+      'e729': {
+        session_id: 'e729f066-4b76-4eab-b4ee-36842f10243a',
+        customer: 'Customer 3',
+        messages: [
+          { role: 'user', content: 'I have a headache, what should I take?', timestamp: '06:01:18' },
+          { role: 'assistant', content: 'I see you have Optalgin and Acamol in your prescription. I recommend starting with Acamol.', timestamp: '06:01:20' },
+          { role: 'user', content: 'Thank you!', timestamp: '06:01:25' }
+        ]
+      },
+      'c31e': {
+        session_id: 'c31eeb1e-4d47-4c8a-9f2a-8b3c5d6e7f8g',
+        customer: 'Customer 1',
+        messages: [
+          { role: 'user', content: 'I forgot to take my medicine in the morning', timestamp: '06:01:15' },
+          { role: 'assistant', content: 'No worries. Take it now and continue as usual tomorrow.', timestamp: '06:01:17' }
+        ]
+      }
+    };
+
+    const testData = {
+      'test_1': {
+        name: 'test_get_valid_customer_info',
+        status: 'success',
+        turns: 1,
+        conversation: [
+          { role: 'customer', content: 'Hello, this is Sarah Chen. I\'m calling to check on the prescriptions I have on file before I come to pick them up. My customer ID is 1.' },
+          { role: 'agent', content: 'Hi Sarah, I\'ve got your prescriptions details. You have two active prescriptions on file:\n\n1. Concor, which is a blood pressure lowering medication. The prescribed amount is 2 boxes, each box containing 30 pills. You take it once a day, and the prescription is valid until November 29, 2025.\n\n2. Acamol, a pain reliever and fever reducer. The prescribed amount is 1 box, with 8 pills per box. This is to be taken as needed.\n\nLet me know if you\'d like to check availability or if you need more details.' }
+        ],
+        tools_called: ['get_customer_info', 'get_customer_prescriptions', 'get_medicine_info']
+      },
+      'test_2': {
+        name: 'test_get_valid_customer_info',
+        status: 'success',
+        turns: 2,
+        conversation: [
+          { role: 'customer', content: 'Hi, this is Sarah Chen calling. I\'d like to check the prescriptions I have on file before coming in to pick them up. Can you help me with that?' },
+          { role: 'agent', content: 'Of course, Sarah. I\'ll just need your customer ID number to look up your prescriptions. Could you please share that with me?' },
+          { role: 'customer', content: 'Sure, my customer ID is 1.' },
+          { role: 'agent', content: 'Sarah, you currently have two active prescriptions on file.\n\nFirst, there\'s a prescription for Concor: 2 units, to be taken once a day, for 30 days.\n\nSecond, there\'s a prescription for Acamol: 1 unit, to be taken as needed, also for 30 days.\n\nNeither of these have been dispensed yet. If you want more details or need to check availability, let me know.' }
+        ],
+        tools_called: ['get_customer_info', 'get_customer_prescriptions']
+      }
+    };
+
+    // Navigate to conversation details page
+    function showConversation(id) {
+      // Check live conversations first, then fall back to sample data
+      const conv = liveConversations[id] || conversationData[id];
+      if (!conv) {
+        console.warn('Conversation not found:', id);
+        return;
+      }
+      
+      // Store conversation data in localStorage for the details page
+      localStorage.setItem(`conversation_${conv.session_id.substring(0, 8)}`, JSON.stringify(conv));
+      
+      // Navigate to conversation details page
+      window.location.href = `conversation-details.html?id=${conv.session_id.substring(0, 8)}`;
+    }
+
+    function showTest(id) {
+      const test = testData[id];
+      if (!test) return;
+      
+      // Store test data in localStorage for future use (if implementing test details page)
+      localStorage.setItem(`test_${id}`, JSON.stringify(test));
+      
+      // For now, display a simple alert (could be converted to a separate page later)
+      const statusIcon = test.status === 'success' ? '✅' : '❌';
+      alert(`${statusIcon} ${test.name}\n\nStatus: ${test.status}\nTurns: ${test.turns}\nTools: ${test.tools_called.join(', ')}`);
+    }
+
+    // Update current time
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('current-time').textContent = now.toLocaleTimeString();
+      document.getElementById('last-updated').textContent = now.toLocaleTimeString();
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // Update year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Refresh data function
+    async function refreshData() {
+      console.log('Refreshing data...');
+      const btn = event.target.closest('button');
+      const icon = btn.querySelector('svg');
+      icon.style.animation = 'spin 1s linear infinite';
+      
+      const data = await fetchMetrics();
+      if (data) {
+        updateDashboard(data);
+      }
+      
+      setTimeout(() => {
+        icon.style.animation = '';
+      }, 500);
+    }
+
+    // Initialize dashboard on page load
+    async function initDashboard() {
+      console.log('Initializing dashboard...');
+      const data = await fetchMetrics();
+      if (data) {
+        updateDashboard(data);
+        console.log('Dashboard loaded with live data');
+      } else {
+        console.warn('Failed to load metrics, using default values');
+      }
+    }
+
+    // Load data when page loads
+    window.addEventListener('DOMContentLoaded', initDashboard);
+
+    // Lucide icons
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  </script>
+
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</body>
+</html>

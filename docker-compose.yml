@@ -1,0 +1,39 @@
+services:
+  voice-bot:
+    build: .
+    container_name: voice-bot
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+    stdin_open: true
+    tty: true
+    depends_on:
+      - redis
+
+  dashboard-api:
+    build: .
+    container_name: dashboard-api
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./dashboard:/app/dashboard
+      - ./backend:/app/backend
+    command: python dashboard/api.py
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: voice-bot-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    command: redis-server --save 60 1 --loglevel warning
+    restart: unless-stopped

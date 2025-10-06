@@ -1,0 +1,13 @@
+openai
+python-dotenv
+fastapi
+uvicorn[standard]
+httpx
+redis
+requests
+aiortc
+av
+numpy
+
+Flask
+flask-cors
