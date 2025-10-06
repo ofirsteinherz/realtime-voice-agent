@@ -20,7 +20,14 @@ Dr. Max is an agentic system that combines real-time conversational AI with phar
 - **[Security](#security)** - Triple-layer defense: system prompting, content moderation, and prompt injection
 - **[Observability](#observability)** - Trace-based testing with LLM-as-judge evaluation across 20 scenarios, plus real-time analytics dashboard
 
-[PLACEHOLDER-DEMO-VIDEO]
+<p align="center">
+  <figure>
+    <a href="https://www.youtube.com/watch?v=Q_wAOsA5Gwo">
+      <img src="readme_assets/videos/site.png"/>
+    </a>
+    <figcaption><em>Click to watch video</em></figcaption>
+  </figure>
+</p>
 
 # Deliverables
 
@@ -76,34 +83,13 @@ docker-compose exec voice-bot python backend/tests/features/test_moderation_logg
 
 # Architecture
 
-In this part, we will go throw key capabilities of the AI Agent, while showing some graphs and key functions.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     WebRTC Connection                        │
-│  ┌──────────────┐           ┌──────────────────────────┐   │
-│  │   Backend    │◄─────────►│   OpenAI Realtime API   │   │
-│  │   Server     │           └──────────────────────────┘   │
-│  └──────────────┘                                           │
-│         ▲                                                    │
-│         │ WebRTC Audio Stream                               │
-│         ▼                                                    │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          Frontend (voice2char.html)                   │  │
-│  │  ┌────────────┐  ┌──────────────┐  ┌──────────────┐ │  │
-│  │  │   Audio    │─►│ Web Audio    │─►│   Three.js   │ │  │
-│  │  │  Element   │  │   Analyser   │  │  Character   │ │  │
-│  │  └────────────┘  └──────────────┘  └──────────────┘ │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
-
+In this part, we will go through key capabilities of the AI Agent, while showing some graphs and key functions.
 
 ## Agent
 
 Recently, [OpenAI released Realtime API](https://platform.openai.com/docs/guides/realtime), which enables to build low-latency, multimodal LLM applications. `gpt-realtime`, which released with the new API, natively support speech-to-speech interaction, as well as text and images.
 
-By design, Realtime API supports WebSockets, and WebRTC. In the beggining, I implemented the solution based on WebSockets, and I got laggy and chuncy responses from the model. I decided to move to WebRTC, and the peer-to-peer connectivity felt imediatly seemless interaction, and I chose to continue with it.
+By design, Realtime API supports WebSockets, and WebRTC. In the beginning, I implemented the solution based on WebSockets, and I got laggy and chunky responses from the model. I decided to move to WebRTC, and the peer-to-peer connectivity felt immediately seamless interaction, and I chose to continue with it.
 
 The python backend acts as proxy between the frontend + logics to OpenAI.
 
@@ -113,7 +99,8 @@ The python backend acts as proxy between the frontend + logics to OpenAI.
 
 ### Session Initialization
 
-The frontend initiates WebRTC connection offer `this.peerConnection = new RTCPeerConnection();` (in [`rtcManager.js`](frontend/js/rtcManager.js)), which contains the SDP (Session Description Protocol). SDP is the core of the WebRTC, describes the multimedia communication session, for peer-to-peer connection. Example:
+The frontend initiates WebRTC connection offer `this.peerConnection = new RTCPeerConnection();` (in [`rtcManager.js`](frontend/js/rtcManager.js)), which contains the SDP (Session Description Protocol). SDP is the core of WebRTC, it describes the multimedia communication session, for a peer-to-peer connection. Example:
+
 ```
 v=0
 o=- 123456789 2 IN IP4 127.0.0.1
@@ -917,7 +904,14 @@ Result: PASSED ✅ (Expected failure)
 
 For Real-time analytics, I created a site providing operational insights, security monitoring, and performance metrics from Redis data with an API.
 
-[place here a video]
+<p align="center">
+  <figure>
+    <a href="https://www.youtube.com/watch?v=03yiX0Kx0HU">
+      <img src="readme_assets/videos/dashboard.png"/>
+    </a>
+    <figcaption><em>Click to watch video</em></figcaption>
+  </figure>
+</p>
 
 #### KPIs
 <p align="center">
