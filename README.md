@@ -7,7 +7,7 @@ AI agent pharmacy assistant based on OpenAI's Realtime API to provide natural, m
 
 # Overview
 
-Dr. Max is an agentic system that combines real-time conversational AI with pharmacy operations management. Built on WebRTC peer-to-peer connectivity and Redis-backed database, the agent orchestras complex workflows through function calling to handle prescription management, inventory control, and customer service.
+Dr. Max is an agentic system that combines real-time conversational AI with pharmacy operations management. Built on WebRTC peer-to-peer connectivity and Redis-backed database, the agent orchestrates complex workflows through function calling to handle prescription management, inventory control, and customer service.
 
 **Key Capabilities:**
 
@@ -33,7 +33,7 @@ Dr. Max is an agentic system that combines real-time conversational AI with phar
 2. **Multi-Step Flow** + **Evidence**: Three multi-step workflow demonstrations: [`get_valid_customer_info`](readme_assets/multi-steps-eval/get_valid_customer_info.png), [`search_medicine_by_partial_name`](readme_assets/multi-steps-eval/search_medicine_by_partial_name.png), and [`check_availability_before_dispensing`](readme_assets/multi-steps-eval/check_availability_before_dispensing.png)
 3. **Voice and Chat**: talked about this here [Multi-Modal Input Support](#multi-modal-input-support)
 4. **System Prompt**: [`instructions.md`](backend/instructions.md)
-5. **Testing Plan**: talked abou this here [Observability](#observability)
+5. **Testing Plan**: talked about this here [Observability](#observability)
 
 # Quick Start
 
@@ -85,9 +85,9 @@ In this part, we will go through key capabilities of the AI Agent, while showing
 
 ## Agent
 
-Recently, [OpenAI released Realtime API](https://platform.openai.com/docs/guides/realtime), which enables to build low-latency, multimodal LLM applications. `gpt-realtime`, which released with the new API, natively support speech-to-speech interaction, as well as text and images.
+Recently, [OpenAI released Realtime API](https://platform.openai.com/docs/guides/realtime), which enables building low-latency, multimodal LLM applications. `gpt-realtime`, which was released with the new API, natively supports speech-to-speech interaction, as well as text and images.
 
-By design, Realtime API supports WebSockets, and WebRTC. In the beginning, I implemented the solution based on WebSockets, and I got laggy and chunky responses from the model. I decided to move to WebRTC, and the peer-to-peer connectivity felt immediately seamless interaction, and I chose to continue with it.
+By design, Realtime API supports WebSockets and WebRTC. In the beginning, I implemented the solution based on WebSockets, and I got laggy and chunky responses from the model. I decided to move to WebRTC, and the peer-to-peer connectivity provided immediately seamless interaction, and I chose to continue with it.
 
 The python backend acts as proxy between the frontend + logics to OpenAI.
 
@@ -110,7 +110,7 @@ a=rtpmap:8 PCMA/8000
 a=rtpmap:97 opus/48000/2
 ```
 
-After creation of the SDP, the frontend sends POST request to `/session` endpoint which in the backend. 
+After creation of the SDP, the frontend sends POST request to `/session` endpoint in the backend.
 
 ```python
 @router.post("/session")
@@ -127,7 +127,7 @@ async def create_session_endpoint(request: Request, language: str = "he"):
         return Response(content=answer_sdp, status_code=status_code)
 ```
 
-Eventually, I created the WebRTC (create_webrtc_session in [`session_service.py`](backend/services/session_service.py)) which builds the WebRTC connection with OpenAI's Realtime API. the function create_session_config helps us to create the agent's settings: model (speech-to-speech), system prompt, config the turn detection between the user and the agent. Also, I added spech-to-text model, which enables to see the user's transciptiton (realtime model is speech-to-speech only).
+Eventually, I created the WebRTC (create_webrtc_session in [`session_service.py`](backend/services/session_service.py)) which builds the WebRTC connection with OpenAI's Realtime API. The function create_session_config helps us to create the agent's settings: model (speech-to-speech), system prompt, config the turn detection between the user and the agent. Also, I added speech-to-text model, which enables us to see the user's transcription (realtime model is speech-to-speech only).
 
 ```python
 {
@@ -156,7 +156,7 @@ Eventually, I created the WebRTC (create_webrtc_session in [`session_service.py`
 
 ### Bidirectional Communication
 
-In the `/session` endpoint, OpenAI returns also SDP, that enable hybrid communication:
+In the `/session` endpoint, OpenAI also returns SDP, that enables hybrid communication:
 
 - Backend: Initial load, tool execution, and Redis storage
 - Backend bypassed: Real-time audio and AI conversations (direct to OpenAI)
@@ -205,9 +205,9 @@ We process the events in [`eventHandler.js`](frontend/js/eventHandler.js), and r
 
 ### Tools
 
-The agent can execute pharmacy operations throught 9 function calling.
+The agent can execute pharmacy operations through 9 function calls.
 
-1. **Tool Definitions** ([`pharmacy_tool_definitions.py`](backend/tools/pharmacy_tool_definitions.py)): Defined the tools in json format, as it would be injected into the agent's prompt
+1. **Tool Definitions** ([`pharmacy_tool_definitions.py`](backend/tools/pharmacy_tool_definitions.py)): Defines the tools in JSON format, as they will be injected into the agent's prompt
 
 ```python
 PHARMACY_TOOLS = [
@@ -268,7 +268,7 @@ def execute_pharmacy_tool(tool_name: str, arguments: Dict[str, Any]) -> str:
 ```
 
 
-4. **Tool Implementaions** ([`pharmacy_tool_implementations.py`](backend/tools/pharmacy_tool_implementations.py)): Execute tool calls the matched tool, which interact with the Redis database
+4. **Tool Implementations** ([`pharmacy_tool_implementations.py`](backend/tools/pharmacy_tool_implementations.py)): Executes tool calls to the matched tool, which interacts with the Redis database
 
 ```python
 def get_customer_info(customer_id: int) -> Optional[Dict[str, Any]]:
@@ -334,7 +334,7 @@ saveConversationMessage(message) {
 }
 ```
 
-The diagram below shows the lifecycle of the agent interaction in five step: (1) **User Input** - gathers speech/text input via WebRTC, (2) **Real-Time Transcription** - streaming audio-to-text conversion, (3) **Function Execution** - processing tool calls with Redis data operations, (4) **Response Delivery** - streaming AI audio with synchronized animations (lip sync movement),  (5) **Conversation Persistence** - saving interaction history.
+The diagram below shows the lifecycle of the agent interaction in five steps: (1) **User Input** - gathers speech/text input via WebRTC, (2) **Real-Time Transcription** - streaming audio-to-text conversion, (3) **Function Execution** - processing tool calls with Redis data operations, (4) **Response Delivery** - streaming AI audio with synchronized animations (lip sync movement),  (5) **Conversation Persistence** - saving interaction history.
 
 ```mermaid
 sequenceDiagram
@@ -387,7 +387,7 @@ sequenceDiagram
 
 ## Interface
 
-The application features dual-interface design combining a 3D animated pharmacist character with a chat interface. The UI creates an human-like interaction experience via synchronized visual and speech characteristics.
+The application features dual-interface design combining a 3D animated pharmacist character with a chat interface. The UI creates a human-like interaction experience via synchronized visual and speech characteristics.
 
 <p align="center">
   <img src="readme_assets/hello.jpeg"/>
@@ -395,7 +395,7 @@ The application features dual-interface design combining a 3D animated pharmacis
 
 ### 3D Pharmacist Character
 
-Character anatomy built with [Three.js](https://github.com/mrdoob/three.js) , and includes 15+ anatomical components. The main comcomponent is the mouth, which is the half circled structure with dynamic scaling (lip-sync).
+Character anatomy built with [Three.js](https://github.com/mrdoob/three.js), and includes 15+ anatomical components. The main component is the mouth, which is the half circled structure with dynamic scaling (lip-sync).
 
 ### Animations
 
@@ -404,7 +404,7 @@ We have 2 main animations:
 2. **Audio-Reactive Animations** (When Speaking): When AI audio plays, we lip-sync the mouth:
     - Analyzes audio frequencies in real-time
     - Mouth shape changes
-    - Smooth transiition between shapes
+    - Smooth transition between shapes
 
 ```javascript
 const normalizedVolume = Math.min(average / 128, 1);
@@ -419,11 +419,11 @@ character.position.y = baseBreathing + Math.sin(time * 1.5) * 0.05 * normalizedV
 
 ### Assets Generation
 
-To leverege even more the use of gen-ai in the project, I desiced to use image generation models:
+To leverage even more the use of gen-ai in the project, I decided to use image generation models:
 
-1. **Image generation** (google/nano-banana) for pharmecy image.
-2. **Remove background** (bria/remove-background) for seperate the background and counter images
-3. **Resulotion** (bria/increase-resolution)
+1. **Image generation** (google/nano-banana) for pharmacy image.
+2. **Remove background** (bria/remove-background) to separate the background and counter images
+3. **Resolution** (bria/increase-resolution)
 
 <p align="center">
   <img src="readme_assets/scene-creation.png" width = 400/>
@@ -432,7 +432,7 @@ To leverege even more the use of gen-ai in the project, I desiced to use image g
 
 ### Chat Interface
 
-Enable text-based chat, see the model voice transcription, and send text masges to the agent. The user can see the tool's interactions, security indicators and change language.
+Enables text-based chat, see the model voice transcription, and send text messages to the agent. The user can see the tool's interactions, security indicators and change language.
 
 
 | Tool Use | Security | Language |
@@ -448,9 +448,9 @@ I added also status badge, which shows:
 
 ## Redis
 
-Altough LiteSQL totally provides the same results in lower effort of setup, I chose to implement Redis in the project, as in production this is the best practice to do when we want to release the bottleneck in the pipeline.
+Although LiteSQL totally provides the same results with lower setup effort, I chose to implement Redis in the project, as in production this is the best practice when we want to release the bottleneck in the pipeline.
 
-So I chose Redis as the in-memory data store (RAM database) for the pharmacy management system. It provide fast access to customer information, prescriptions, inventory, conversation history, and moderation logs. 
+So I chose Redis as the in-memory data store (RAM database) for the pharmacy management system. It provides fast access to customer information, prescriptions, inventory, conversation history, and moderation logs.
 
 I created [`redis_data_generator.py`](backend/scripts/redis_data_generator.py) which creates predefined test data aligned with test scenarios.
 
@@ -596,17 +596,17 @@ redis:
 
 ## Security
 
-I created triple-layer security, enabling both safety and contol of the agent's responses.
+I created triple-layer security, enabling both safety and control of the agent's responses.
 
 <p align="center">
   <img src="readme_assets/security.png"/>
 </p>
 
 ### Prompt
-I was asked to make sure that the agent does not provide: medical advice, diagnosis, and encouragement to purchase medications. Also, I limited the model of providing the user information about it's internal tools, to prevent security attacks in the level of the model.
+I was asked to make sure that the agent does not provide: medical advice, diagnosis, and encouragement to purchase medications. Also, I limited the model from providing the user information about its internal tools, to prevent security attacks at the level of the model.
 
 <details>
-<summary>See the relevent part in [`instructions.md`](backend/instructions.md)</summary>
+<summary>See the relevant part in [`instructions.md`](backend/instructions.md)</summary>
 
 # 3. GUARDRAILS & RESTRICTIONS
 
@@ -641,13 +641,13 @@ For ALL such questions, give the same deflection response above and ask how you 
 </details>
 
 ### Text Moderation
-I used OpenAI's `omni-moderation-latest` [model](https://platform.openai.com/docs/guides/moderation) for text moderation, which provides indication if the input is potentially harmful (13 categoris). The category score threshold I chose for it is 10%.
+I used OpenAI's `omni-moderation-latest` [model](https://platform.openai.com/docs/guides/moderation) for text moderation, which provides indication if the input is potentially harmful (13 categories). The category score threshold I chose for it is 10%.
 
 ### Injection
-For "Ignore your previus prompts", I decided to use Meta's `meta-llama/llama-prompt-guard-2-86m` [model](https://www.llama.com/docs/model-cards-and-prompt-formats/prompt-guard/) in Groq endpoint. It provides prediction if the input is an injection attack. The score threshold I chose for it is 50%.
+For "Ignore your previous prompts", I decided to use Meta's `meta-llama/llama-prompt-guard-2-86m` [model](https://www.llama.com/docs/model-cards-and-prompt-formats/prompt-guard/) in Groq endpoint. It provides prediction if the input is an injection attack. The score threshold I chose for it is 50%.
 
 ### Finetune Llama Guard for Custom Policy
-I tried to use the Llama Guard for our custom policy without relying only on the prompt, and I got into some problems. For production environment  I would finetune it to our policy, and handle the agent's output as well.
+I tried to use the Llama Guard for our custom policy without relying only on the prompt, and I got into some problems. For a production environment I would finetune it to our policy, and handle the agent's output as well.
 
 ### Use in code
 
@@ -672,9 +672,9 @@ async def moderate_text(text: str, session_id: str) -> Dict:
 
 
 ## Observability
-I created observability platform, which allows Test-Driven-Development. In many situations, we want to make sure that the preformence of our agent doesn't worsen, and if it gets better. We want to add/remove tools, change system promts, update to the latest model, perform daily tests and more.
+I created an observability platform, which allows Test-Driven-Development. In many situations, we want to make sure that the performance of our agent doesn't worsen, and if it gets better. We want to add/remove tools, change system prompts, update to the latest model, perform daily tests and more.
 
-For that, when I developed I created 3 stages of observabilities, which are scalable and mesurable.
+For that, when I developed I created 3 stages of observability, which are scalable and measurable.
 
 <p align="center">
   <img src="readme_assets/logs.png"/>
@@ -736,7 +736,7 @@ docker-compose exec voice-bot python backend/tests/features/[test-name].py
 
 ### Trace Observability
 
-I created an AI based trace observability system using **LLM-driven customer simulation** and **automated conversation evaluation** to validate the pharmacy agent's behavior across 20 realistic scenarios. I made the pipeline interact with the agent via the WebRTC protocol (text mode only), to simulate as close to production as possible. The evaluation split by two parts: LLM as a judge and expcted tool use.
+I created an AI based trace observability system using **LLM-driven customer simulation** and **automated conversation evaluation** to validate the pharmacy agent's behavior across 20 realistic scenarios. I made the pipeline interact with the agent via the WebRTC protocol (text mode only), to simulate as close to production as possible. The evaluation is split into two parts: LLM as a judge and expected tool use.
 
 
 #### How It Works
