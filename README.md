@@ -1,8 +1,6 @@
 <p align="center">
   <img src="readme_assets/character.png" width="400"/>
 </p>
-
----
 <h1 align="center">Dr. Max: Realtime AI Agent</h1>
 
 AI agent pharmacy assistant based on OpenAI's Realtime API to provide natural, multi-modal patient interactions through voice and text interfaces.
@@ -25,7 +23,7 @@ Dr. Max is an agentic system that combines real-time conversational AI with phar
     <a href="https://www.youtube.com/watch?v=Q_wAOsA5Gwo">
       <img src="readme_assets/videos/site.png"/>
     </a>
-    <figcaption><em>Click to watch video</em></figcaption>
+    <figcaption><em>Click to watch live demo</em></figcaption>
   </figure>
 </p>
 
@@ -909,7 +907,7 @@ For Real-time analytics, I created a site providing operational insights, securi
     <a href="https://www.youtube.com/watch?v=03yiX0Kx0HU">
       <img src="readme_assets/videos/dashboard.png"/>
     </a>
-    <figcaption><em>Click to watch video</em></figcaption>
+    <figcaption><em>Click to watch live demo</em></figcaption>
   </figure>
 </p>
 
